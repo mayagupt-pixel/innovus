@@ -1,0 +1,61 @@
+
+      <!DOCTYPE html>
+<html>
+  <head>
+    <title>Innovus</title>
+    <link rel="stylesheet" href="css/drv_recomm.css">
+    <style>
+      table,
+      th,
+      td {
+        padding: 10px;
+        border: 1px solid black;
+        border-collapse: collapse;
+      }
+    </style>
+
+  </head>
+
+  <body>
+<div class="a"><b>Innovus</b></div>
+</br>
+  </br>
+</br>
+
+set path = (/icd/flow/INNOVUS/INNOVUS162/16.23-s072_1/lnx86/bin $path)</br>
+
+innovus -overwrite -init top.globals</br></br>
+
+
+
+set init_ignore_pgpin_polarity_check VSS</br>
+init_design</br>
+floorPlan -site tsm3site -s 40.0 40.0 6.6 6.16 6.0 6.0</br>
+dbGet [dbGet -p top.nets.isPwrOrGnd 1].name</br></br>
+
+globalNetConnect VDD -pin VDD -instanceBasename * -type pgpin</br>
+globalNetConnect VDD_AO -pin VDD_AO -instanceBasename * -type pgpin</br>
+globalNetConnect VSS -pin VSS -instanceBasename * -type pgpin</br></br>
+
+addRing -skip_via_on_wire_shape Noshape -skip_via_on_pin Standardcell -center 1 -type core_rings -jog_distance 0.33 -threshold 0.33 -nets {VDD VDD_AO VSS} -follow core -layer Metal3 -width 1 -spacing 0.46 -offset 0.33</br>
+addRing -skip_via_on_wire_shape Noshape -skip_via_on_pin Standardcell -center 1 -type core_rings -jog_distance 0.33 -threshold 0.33 -nets {VDD VDD_AO VSS} -follow core -layer Metal1 -width 1 -spacing 0.46 -offset 0.33</br></br>
+
+addStripe -skip_via_on_wire_shape Noshape -block_ring_top_layer_limit Metal3 -max_same_layer_jog_length 0.88 -padcore_ring_bottom_layer_limit Metal1 -set_to_set_distance 100 -skip_via_on_pin Standardcell -stacked_via_top_layer Metal6 -padcore_ring_top_layer_limit Metal3 -spacing 0.46 -merge_stripes_value 0.33 -layer Metal2 -block_ring_bottom_layer_limit Metal1 -width 0.44 -nets {VDD VDD_AO VSS} -stacked_via_bottom_layer Metal1</br>
+
+sroute -connect { blockPin padPin padRing corePin floatingStripe } -layerChangeRange { Metal1 Metal6 } -blockPinTarget { nearestTarget } -padPinPortConnect { allPort oneGeom } -padPinTarget { nearestTarget } -corePinTarget { firstAfterRowEnd } -floatingStripeTarget { blockring padring ring stripe ringpin blockpin followpin } -allowJogging 1 -crossoverViaLayerRange { Metal1 Metal6 } -nets { VDD VDD_AO VSS } -allowLayerChange 1 -blockPin useLef -targetViaLayerRange { Metal1 Metal6 }</br>
+</br>
+</br>
+placeDesign -noPrePlaceOpt</br>
+setFillerMode -core {FILL8 DECAP1}</br>
+addFiller</br>
+routeDesign</br></br>
+
+
+defOut -floorplan -routing  a2.def</br>
+extractRC</br>
+rcOut -spef a.spef -rc_corner <></br>
+
+
+
+  </body>
+</html>
