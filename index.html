@@ -45,6 +45,8 @@ addStripe -skip_via_on_wire_shape Noshape -block_ring_top_layer_limit Metal3 -ma
 sroute -connect { blockPin padPin padRing corePin floatingStripe } -layerChangeRange { Metal1 Metal6 } -blockPinTarget { nearestTarget } -padPinPortConnect { allPort oneGeom } -padPinTarget { nearestTarget } -corePinTarget { firstAfterRowEnd } -floatingStripeTarget { blockring padring ring stripe ringpin blockpin followpin } -allowJogging 1 -crossoverViaLayerRange { Metal1 Metal6 } -nets { VDD VDD_AO VSS } -allowLayerChange 1 -blockPin useLef -targetViaLayerRange { Metal1 Metal6 }</br>
 </br>
 </br>
+setPlaceMode -place_global_place_io_pins true</br>
+
 placeDesign -noPrePlaceOpt</br>
 setFillerMode -core {FILL8 DECAP1}</br>
 addFiller</br>
